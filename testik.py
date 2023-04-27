@@ -10,9 +10,13 @@ beer_suggestions = {
 
 
 def suggest_beer(mood, brand):
+    # Проверка настроения
+    mood = mood.lower()
+    brand = brand.lower()
     if mood not in ["грустное", "веселое", "злое", "обычное"]:
         print("Ошибка: Неправильное настроение")
         return
+    # Проверка бренда одежды
     if brand not in ["zara", "gucchi", "sela"]:
         print("Ошибка: Неправильный бренд одежды")
         return
@@ -25,15 +29,26 @@ def suggest_beer(mood, brand):
 
 
 def add_beer(mood, brand, beer_type, beer_strength, beer_price):
+    if mood not in beer_suggestions:
+        beer_suggestions[mood] = {}
+    beer_suggestions[mood][brand] = (beer_type, beer_strength, beer_price)
     print(f"Сорт пива {beer_type} добавлен в базу данных для настроения '{mood}' и бренда одежды '{brand}'.")
 
 
 def remove_beer(mood, brand):
-    print(f"Сорт пива для настроения '{mood}' и бренда одежды '{brand}' удален из базы данных.")
+    if mood in beer_suggestions and brand in beer_suggestions[mood]:
+        beer_suggestions[mood].pop(brand)
+        print(f"Сорт пива для настроения '{mood}' и бренда одежды '{brand}' удален из базы данных.")
+    else:
+        print(f"Ошибка: Нет такого сорта пива для настроения '{mood}' и бренда одежды '{brand}'.")
 
 
-def print_beer_suggestions(mood,brand,beer_type,beer_strength,beer_price):
-    print(f"Для настроения '{mood}':- Бренд одежды '{brand}': {beer_type} с крепостью {beer_strength} и ценой {beer_price} за литр.")
+def print_beer_suggestions():
+    for mood in beer_suggestions:
+        print(f"Для настроения '{mood}':")
+        for brand in beer_suggestions[mood]:
+            beer_type, beer_strength, beer_price = beer_suggestions[mood][brand]
+            print(f"- Бренд одежды '{brand}': {beer_type} с крепостью {beer_strength} и ценой {beer_price} за литр.")
 
 if __name__ == "__main__":
     print("Бар безалкогольного пива\nДоброго времени суток, я бармен - Олег")
@@ -45,4 +60,3 @@ if __name__ == "__main__":
     add_beer(mood, brand, beer_type, beer_strength, beer_price)
     remove_beer(mood, brand)
     print_beer_suggestions(mood, brand, beer_type, beer_strength, beer_price)
-

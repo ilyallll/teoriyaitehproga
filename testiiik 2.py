@@ -9,6 +9,19 @@ class BeerBar:
             "обычное": {"zara": ("Lager", "4%", 200), "gucchi": ("Pilsner", "5%", 250), "sela": ("Kölsch", "4%", 220)}
         }
 
+    def suggest_beer(self, mood, brand):
+        mood = mood.lower()
+        brand = brand.lower()
+        if mood not in self.beer_suggestions:
+            print("Ошибка: Неправильное настроение")
+            return
+        if brand not in ["zara", "gucchi", "sela"]:
+            print("Ошибка: Неправильный бренд одежды")
+            return
+
+        beer_type, beer_strength, beer_price = self.beer_suggestions[mood][brand]
+        print(f"Мы рекомендуем вам попробовать {beer_type} с крепостью {beer_strength} и ценой {beer_price} за литр.")
+
     def add_beer(self, mood, brand, beer_type, beer_strength, beer_price):
         if mood not in self.beer_suggestions:
             self.beer_suggestions[mood] = {}
@@ -22,36 +35,34 @@ class BeerBar:
         else:
             print(f"Ошибка: Нет такого сорта пива для настроения '{mood}' и бренда одежды '{brand}'.")
 
-    def display_beer_database(self):
-        print("База данных пива:")
-        for mood, suggestions in self.beer_suggestions.items():
-            print(f"Настроение: {mood}")
-            for brand, beer_info in suggestions.items():
-                beer_type, beer_strength, beer_price = beer_info
-                print(f"Бренд одежды: {brand}")
-                print(f"Сорт пива: {beer_type}")
-                print(f"Крепость: {beer_strength}")
-                print(f"Цена: {beer_price} руб.")
-                print("-----------------")
-
-# Создаем экземпляр класса BeerBar
-bar = BeerBar()
-
-# Выводим базу данных пива
-bar.display_beer_database()
-print("-----------------")
-
-# Добавляем новый сорт пива
-bar.add_beer("праздничное", "zara", "Amber Ale", "6%", 300)
-print("-----------------")
-
-# Удаляем сорт пива
-bar.remove_beer("грустное", "gucchi")
-print("-----------------")
-
-# Выводим обновленную базу данных пива
-bar.display_beer_database()
+    def print_beer_suggestions(self):
+        for mood in self.beer_suggestions:
+            print(f"Для настроения '{mood}':")
+            for brand in self.beer_suggestions[mood]:
+                beer_type, beer_strength, beer_price = self.beer_suggestions[mood][brand]
+                print(f"- Бренд одежды '{brand}': {beer_type} с крепостью {beer_strength} и ценой {beer_price} за литр.")
 
 
+if __name__ == "__main__":
+    beer_bar = BeerBar()
+    # Выводим базу данных пива
+    beer_bar.print_beer_suggestions()
+    print("-----------------")
 
+    # Добавляем новый сорт пива
+    beer_bar.add_beer("праздничное", "zara", "Amber Ale", "6%", 300)
+    print("-----------------")
 
+    # Удаляем сорт пива
+    beer_bar.remove_beer("грустное", "gucchi")
+    print("-----------------")
+
+    # Выводим обновленную базу данных пива
+    beer_bar.print_beer_suggestions()
+    mood = input("Введите настроение: ").lower()
+    brand = input("Введите бренд одежды: ").lower()
+    beer_bar.suggest_beer(mood, brand)
+    beer_type, beer_strength, beer_price = beer_bar.beer_suggestions[mood][brand]
+    beer_bar.add_beer(mood, brand, beer_type, beer_strength, beer_price)
+    beer_bar.remove_beer(mood, brand)
+    beer_bar.print_beer_suggestions()

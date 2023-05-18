@@ -45,22 +45,13 @@ class BeerBar:
 
 if __name__ == "__main__":
     beer_bar = BeerBar()
-    # Выводим базу данных пива
-    beer_bar.print_beer_suggestions()
-    print("-----------------")
-
-    # Добавляем новый сорт пива
-    beer_bar.add_beer("праздничное", "zara", "Amber Ale", "6%", 300)
-    print("-----------------")
-
-    # Удаляем сорт пива
-    beer_bar.remove_beer("грустное", "gucchi")
-    print("-----------------")
-
-    # Выводим обновленную базу данных пива
-    beer_bar.print_beer_suggestions()
-    mood = input("Введите настроение: ").lower()
-    brand = input("Введите бренд одежды: ").lower()
+    print("Бар безалкогольного пива\nДоброго времени суток, я бармен - Олег")
+    print("Я не совсем понимаю, какое у вас сегодня настроение? Веселое, грустное, злое или обычное?")
+    print("Укажите один из вариантов!\nКстати, мне очень понравилась ваша одежда!")
+    print("Подскажите, какой это бренд? Я уверен, что это Zara, Gucchi или Sela?")
+    print("Укажите один из вариантов!")
+    mood = input().lower()
+    brand = input().lower()
     beer_bar.suggest_beer(mood, brand)
     beer_type, beer_strength, beer_price = beer_bar.beer_suggestions[mood][brand]
     beer_bar.add_beer(mood, brand, beer_type, beer_strength, beer_price)

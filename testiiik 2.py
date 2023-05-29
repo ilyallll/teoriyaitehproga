@@ -1,33 +1,29 @@
-class BeerBar:
-    """
-    Класс BeerBar представляет собой бар с предложением безалкогольного пива.
-    """
+from threading import Thread
 
+class BeerBar:
     def __init__(self):
         """
         Инициализирует объект класса BeerBar.
 
         Атрибуты:
-        - beer_suggestions (dict): словарь с предложениями по пиву в зависимости от настроения и бренда одежды.
+        - beer_suggestions (dict): Словарь, содержащий рекомендации по пиву для различных настроений и брендов одежды.
         """
         self.beer_suggestions = {
             "грустное": {"zara": ("Stout", "5%", 300), "gucchi": ("Porter", "6%", 350), "sela": ("Brown Ale", "4%", 250)},
-            "веселое": {"zara": ("IPA", "7%", 350), "gucchi": ("Double IPA", "8%", 400),
-                        "sela": ("Belgian Witbier", "4%", 300)},
-            "злое": {"zara": ("Imperial Stout", "10%", 450), "gucchi": ("Russian Imperial Stout", "11%", 500),
-                     "sela": ("Barleywine", "12%", 550)},
+            "веселое": {"zara": ("IPA", "7%", 350), "gucchi": ("Double IPA", "8%", 400), "sela": ("Belgian Witbier", "4%", 300)},
+            "злое": {"zara": ("Imperial Stout", "10%", 450), "gucchi": ("Russian Imperial Stout", "11%", 500), "sela": ("Barleywine", "12%", 550)},
             "обычное": {"zara": ("Lager", "4%", 200), "gucchi": ("Pilsner", "5%", 250), "sela": ("Kölsch", "4%", 220)}
         }
 
     def suggest_beer(self, mood, brand):
         """
-        Предлагает пиво на основе указанного настроения и бренда одежды.
+        Рекомендует сорт пива на основе указанного настроения и бренда одежды.
 
         Аргументы:
-        - mood (str): настроение (грустное, веселое, злое, обычное).
-        - brand (str): бренд одежды (zara, gucchi, sela).
+        - mood (str): Настроение, для которого нужно получить рекомендацию.
+        - brand (str): Бренд одежды.
 
-        Выводит рекомендацию по пиву на основе указанных параметров.
+        Выводит рекомендацию по сорту пива с указанием крепости и цены за литр.
         """
         mood = mood.lower()
         brand = brand.lower()
@@ -43,16 +39,16 @@ class BeerBar:
 
     def add_beer(self, mood, brand, beer_type, beer_strength, beer_price):
         """
-        Добавляет новый сорт пива в базу данных для указанного настроения и бренда одежды.
+        Добавляет новый сорт пива в базу данных рекомендаций.
 
         Аргументы:
-        - mood (str): настроение (грустное, веселое, злое, обычное).
-        - brand (str): бренд одежды (zara, gucchi, sela).
-        - beer_type (str): тип пива.
-        - beer_strength (str): крепость пива.
-        - beer_price (int): цена пива за литр.
+        - mood (str): Настроение, для которого добавляется сорт пива.
+        - brand (str): Бренд одежды.
+        - beer_type (str): Сорт пива.
+        - beer_strength (str): Крепость пива.
+        - beer_price (int): Цена пива за литр.
 
-        Выводит сообщение о добавлении нового сорта пива в базу данных.
+        Добавляет указанный сорт пива в базу данных рекомендаций для указанного настроения и бренда одежды.
         """
         if mood not in self.beer_suggestions:
             self.beer_suggestions[mood] = {}
@@ -61,13 +57,13 @@ class BeerBar:
 
     def remove_beer(self, mood, brand):
         """
-        Удаляет сорт пива из базы данных для указанного настроения и бренда одежды.
+        Удаляет сорт пива из базы данных рекомендаций.
 
         Аргументы:
-        - mood (str): настроение (грустное, веселое, злое, обычное).
-        - brand (str): бренд одежды (zara, gucchi, sela).
+        - mood (str): Настроение, для которого удаляется сорт пива.
+        - brand (str): Бренд одежды.
 
-        Выводит сообщение об удалении сорта пива из базы данных.
+        Удаляет указанный сорт пива из базы данных рекомендаций для указанного настроения и бренда одежды.
         """
         if mood in self.beer_suggestions and brand in self.beer_suggestions[mood]:
             self.beer_suggestions[mood].pop(brand)
@@ -77,9 +73,9 @@ class BeerBar:
 
     def print_beer_suggestions(self):
         """
-        Выводит все предложения по пиву в базе данных.
+        Выводит все рекомендации по сортам пива.
 
-        Для каждого настроения и бренда одежды выводит информацию о сорте пива (тип, крепость, цена).
+        Для каждого настроения и бренда одежды выводит рекомендуемый сорт пива, крепость и цену за литр.
         """
         for mood in self.beer_suggestions:
             print(f"Для настроения '{mood}':")
@@ -97,8 +93,21 @@ if __name__ == "__main__":
     print("Укажите один из вариантов!")
     mood = input().lower()
     brand = input().lower()
-    beer_bar.suggest_beer(mood, brand)
+
+    suggestion_thread = Thread(target=beer_bar.suggest_beer, args=(mood, brand))
+    suggestion_thread.start()
+    suggestion_thread.join()
+
     beer_type, beer_strength, beer_price = beer_bar.beer_suggestions[mood][brand]
-    beer_bar.add_beer(mood, brand, beer_type, beer_strength, beer_price)
-    beer_bar.remove_beer(mood, brand)
-    beer_bar.print_beer_suggestions()
+
+    add_thread = Thread(target=beer_bar.add_beer, args=(mood, brand, beer_type, beer_strength, beer_price))
+    add_thread.start()
+    add_thread.join()
+
+    remove_thread = Thread(target=beer_bar.remove_beer, args=(mood, brand))
+    remove_thread.start()
+    remove_thread.join()
+
+    print_suggestions_thread = Thread(target=beer_bar.print_beer_suggestions)
+    print_suggestions_thread.start()
+    print_suggestions_thread.join()
